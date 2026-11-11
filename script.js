@@ -63,11 +63,25 @@ function renderProducts(list) {
 }
 
 const searchInput = document.getElementById("search-input");
+const categoryFilter = document.getElementById("category-filter");
 
 // State: menyimpan kondisi pencarian/filter saat ini
 const state = {
   search: "",
+  category: "all",
 };
+
+// Isi opsi kategori otomatis dari data produk
+function populateCategories() {
+  const categories = [...new Set(products.map((p) => p.category))];
+
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    categoryFilter.appendChild(option);
+  });
+}
 
 function applyFilters() {
   let result = [...products];
@@ -80,6 +94,11 @@ function applyFilters() {
     );
   }
 
+  // Filter berdasarkan kategori
+  if (state.category !== "all") {
+    result = result.filter((product) => product.category === state.category);
+  }
+
   renderProducts(result);
 }
 
@@ -88,5 +107,11 @@ searchInput.addEventListener("input", (e) => {
   applyFilters();
 });
 
-// Tampilkan awal
+categoryFilter.addEventListener("change", (e) => {
+  state.category = e.target.value;
+  applyFilters();
+});
+
+// Jalankan saat halaman dibuka
+populateCategories();
 applyFilters();
