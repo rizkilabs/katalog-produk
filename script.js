@@ -62,4 +62,31 @@ function renderProducts(list) {
   });
 }
 
-renderProducts(products);
+const searchInput = document.getElementById("search-input");
+
+// State: menyimpan kondisi pencarian/filter saat ini
+const state = {
+  search: "",
+};
+
+function applyFilters() {
+  let result = [...products];
+
+  // Search berdasarkan nama produk (tidak case-sensitive)
+  const keyword = state.search.trim().toLowerCase();
+  if (keyword) {
+    result = result.filter((product) =>
+      product.name.toLowerCase().includes(keyword),
+    );
+  }
+
+  renderProducts(result);
+}
+
+searchInput.addEventListener("input", (e) => {
+  state.search = e.target.value;
+  applyFilters();
+});
+
+// Tampilkan awal
+applyFilters();
