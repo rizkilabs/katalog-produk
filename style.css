@@ -75,12 +75,18 @@ main {
 }
 
 #search-input:focus,
-#category-filter:focus {
-  outline: none;
-  border-color: #1f2937;
+#category-filter,
+#sort-price {
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
 }
 
-#search-input:focus {
+#search-input:focus,
+#category-filter:focus,
+#sort-price:focus {
   outline: none;
   border-color: #1f2937;
 }
