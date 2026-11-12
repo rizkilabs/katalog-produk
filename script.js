@@ -65,12 +65,15 @@ function renderProducts(list) {
 const searchInput = document.getElementById("search-input");
 const categoryFilter = document.getElementById("category-filter");
 const sortPrice = document.getElementById("sort-price");
+const paginationEl = document.getElementById("pagination");
+const ITEMS_PER_PAGE = 6;
 
 // State: menyimpan kondisi pencarian/filter saat ini
 const state = {
   search: "",
   category: "all",
   sort: "default",
+  page: 1,
 };
 
 // Isi opsi kategori otomatis dari data produk
@@ -83,6 +86,42 @@ function populateCategories() {
     option.textContent = category;
     categoryFilter.appendChild(option);
   });
+}
+
+function renderPagination(totalPages) {
+  paginationEl.innerHTML = "";
+
+  // Kalau cuma 1 halaman, pagination nggak perlu ditampilkan
+  if (totalPages <= 1) return;
+
+  // Tombol Sebelumnya
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "« Sebelumnya";
+  prevBtn.disabled = state.page === 1;
+  prevBtn.addEventListener("click", () => goToPage(state.page - 1));
+  paginationEl.appendChild(prevBtn);
+
+  // Tombol nomor halaman
+  for (let i = 1; i <= totalPages; i++) {
+    const pageBtn = document.createElement("button");
+    pageBtn.textContent = i;
+    if (i === state.page) pageBtn.classList.add("active");
+    pageBtn.addEventListener("click", () => goToPage(i));
+    paginationEl.appendChild(pageBtn);
+  }
+
+  // Tombol Berikutnya
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "Berikutnya »";
+  nextBtn.disabled = state.page === totalPages;
+  nextBtn.addEventListener("click", () => goToPage(state.page + 1));
+  paginationEl.appendChild(nextBtn);
+}
+
+function goToPage(page) {
+  state.page = page;
+  applyFilters();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function applyFilters() {
@@ -108,21 +147,32 @@ function applyFilters() {
     result.sort((a, b) => b.price - a.price);
   }
 
-  renderProducts(result);
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(result.length / ITEMS_PER_PAGE));
+  if (state.page > totalPages) state.page = totalPages;
+
+  const start = (state.page - 1) * ITEMS_PER_PAGE;
+  const paginated = result.slice(start, start + ITEMS_PER_PAGE);
+
+  renderProducts(paginated);
+  renderPagination(totalPages);
 }
 
 searchInput.addEventListener("input", (e) => {
   state.search = e.target.value;
+  state.page = 1;
   applyFilters();
 });
 
 categoryFilter.addEventListener("change", (e) => {
   state.category = e.target.value;
+  state.page = 1;
   applyFilters();
 });
 
 sortPrice.addEventListener("change", (e) => {
   state.sort = e.target.value;
+  state.page = 1;
   applyFilters();
 });
 
