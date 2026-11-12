@@ -64,11 +64,13 @@ function renderProducts(list) {
 
 const searchInput = document.getElementById("search-input");
 const categoryFilter = document.getElementById("category-filter");
+const sortPrice = document.getElementById("sort-price");
 
 // State: menyimpan kondisi pencarian/filter saat ini
 const state = {
   search: "",
   category: "all",
+  sort: "default",
 };
 
 // Isi opsi kategori otomatis dari data produk
@@ -99,6 +101,13 @@ function applyFilters() {
     result = result.filter((product) => product.category === state.category);
   }
 
+  // Sorting berdasarkan harga
+  if (state.sort === "asc") {
+    result.sort((a, b) => a.price - b.price);
+  } else if (state.sort === "desc") {
+    result.sort((a, b) => b.price - a.price);
+  }
+
   renderProducts(result);
 }
 
@@ -109,6 +118,11 @@ searchInput.addEventListener("input", (e) => {
 
 categoryFilter.addEventListener("change", (e) => {
   state.category = e.target.value;
+  applyFilters();
+});
+
+sortPrice.addEventListener("change", (e) => {
+  state.sort = e.target.value;
   applyFilters();
 });
 
