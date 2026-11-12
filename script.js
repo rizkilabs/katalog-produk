@@ -66,6 +66,7 @@ const searchInput = document.getElementById("search-input");
 const categoryFilter = document.getElementById("category-filter");
 const sortPrice = document.getElementById("sort-price");
 const paginationEl = document.getElementById("pagination");
+const resultInfoEl = document.getElementById("result-info");
 const ITEMS_PER_PAGE = 6;
 
 // State: menyimpan kondisi pencarian/filter saat ini
@@ -154,6 +155,8 @@ function applyFilters() {
   const start = (state.page - 1) * ITEMS_PER_PAGE;
   const paginated = result.slice(start, start + ITEMS_PER_PAGE);
 
+  resultInfoEl.textContent = `Menampilkan ${paginated.length} dari ${result.length} produk`;
+
   renderProducts(paginated);
   renderPagination(totalPages);
 }
@@ -173,6 +176,21 @@ categoryFilter.addEventListener("change", (e) => {
 sortPrice.addEventListener("change", (e) => {
   state.sort = e.target.value;
   state.page = 1;
+  applyFilters();
+});
+
+const resetBtn = document.getElementById("reset-btn");
+
+resetBtn.addEventListener("click", () => {
+  state.search = "";
+  state.category = "all";
+  state.sort = "default";
+  state.page = 1;
+
+  searchInput.value = "";
+  categoryFilter.value = "all";
+  sortPrice.value = "default";
+
   applyFilters();
 });
 
